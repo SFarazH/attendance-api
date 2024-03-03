@@ -1,5 +1,6 @@
 const express = require("express");
 const puppeteer = require("puppeteer");
+require("dotenv").config();
 
 const app = express();
 app.use(express.json());
@@ -10,7 +11,19 @@ app.listen(PORT, () => {
 });
 
 const getData = async (username, password) => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: [
+      "--disable-setuid-sandox",
+      "--no-sandbox",
+      "--single-process",
+      "--no-zygote",
+    ],
+    executeablePath:
+      process.env.NODE_ENV === "production"
+        ? process.env.PUPPETEER_EXECUTEABLE_PATH
+        : puppeteer.executeablePath(),
+  });
+
   const page = await browser.newPage();
   await page.goto("https://rcoem.in");
   await page.locator("#j_username").fill(username);
