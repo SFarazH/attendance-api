@@ -69,10 +69,10 @@ const getData = async (username, password) => {
 app.get("/data", async (request, response) => {
   try {
     const { username, password } = request.query;
-    // if (!username || !password) {
-    //   return response.status(400).send("Username and password are required");
-    // }
-    const status = await getData("hasansf_1@rknec.edu", "f@r@z)&07");
+    if (!username || !password) {
+      return response.status(400).send("Username and password are required");
+    }
+    const status = await getData(username, password);
     response.send(status);
   } catch (error) {
     console.error("Error occurred:", error);
