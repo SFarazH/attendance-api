@@ -21,7 +21,7 @@ const getData = async (username, password) => {
     executeablePath:
       process.env.NODE_ENV === "production"
         ? process.env.PUPPETEER_EXECUTEABLE_PATH
-        : puppeteer.executeablePath(),
+        : puppeteer.executablePath(),
   });
 
   const page = await browser.newPage();
