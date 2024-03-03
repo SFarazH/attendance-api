@@ -63,6 +63,6 @@ app.get("/status", async (request, response) => {
     response.send(status);
   } catch (error) {
     console.error("Error occurred:", error);
-    response.status(500).send("Internal Server Error");
+    response.status(500).send(error);
   }
 });
