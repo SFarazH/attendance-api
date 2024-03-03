@@ -53,13 +53,13 @@ const getData = async (username, password) => {
   return jsonResponse;
 };
 
-app.get("/status", async (request, response) => {
+app.get("/data", async (request, response) => {
   try {
     const { username, password } = request.query;
-    if (!username || !password) {
-      return response.status(400).send("Username and password are required");
-    }
-    const status = await getData(username, password);
+    // if (!username || !password) {
+    //   return response.status(400).send("Username and password are required");
+    // }
+    const status = await getData("hasansf_1@rknec.edu", "f@r@z)&07");
     response.send(status);
   } catch (error) {
     console.error("Error occurred:", error);
