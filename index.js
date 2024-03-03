@@ -8,6 +8,7 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server Listening on PORT:", PORT);
+  console.log(encodeURIComponent("f@r@z)&07"));
 });
 
 const getData = async (username, password) => {
@@ -37,33 +38,33 @@ const getData = async (username, password) => {
     (cookie) => cookie.name === "JSESSIONID"
   );
 
-  if (jSessionIdCookie) {
-    console.log("JSESSIONID cookie found:", jSessionIdCookie.value);
-  } else {
-    console.log("JSESSIONID cookie not found.");
-  }
+  // if (jSessionIdCookie) {
+  //   console.log("JSESSIONID cookie found:", jSessionIdCookie.value);
+  // } else {
+  //   console.log("JSESSIONID cookie not found.");
+  // }
 
-  await page.setCookie({
-    name: "JSESSIONID",
-    value: jSessionIdCookie.value,
-    domain: "rcoem.in",
-    path: "/",
-    httpOnly: true,
-    secure: true,
-    sameSite: "Lax",
-  });
-  await page.goto("https://rcoem.in/getSubjectOnChangeWithSemId1.json?", {
-    headers: {
-      accept: "application/json",
-    },
-  });
-  const jsonResponse = await page.evaluate(() => {
-    return JSON.parse(document.body.innerText);
-  });
+  // await page.setCookie({
+  //   name: "JSESSIONID",
+  //   value: jSessionIdCookie.value,
+  //   domain: "rcoem.in",
+  //   path: "/",
+  //   httpOnly: true,
+  //   secure: true,
+  //   sameSite: "Lax",
+  // });
+  // await page.goto("https://rcoem.in/getSubjectOnChangeWithSemId1.json?", {
+  //   headers: {
+  //     accept: "application/json",
+  //   },
+  // });
+  // const jsonResponse = await page.evaluate(() => {
+  //   return JSON.parse(document.body.innerText);
+  // });
 
   await browser.close();
 
-  return jsonResponse;
+  return jSessionIdCookie.value;
 };
 
 app.get("/data", async (request, response) => {
