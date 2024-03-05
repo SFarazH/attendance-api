@@ -8,13 +8,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
   console.log("Server Listening on PORT:", PORT);
 });
 
 const getCookies = async (username, password) => {
   const browser = await puppeteer.launch({
+    // headless: false,
     args: [
       "--disable-setuid-sandox",
       "--no-sandbox",
@@ -36,6 +37,7 @@ const getCookies = async (username, password) => {
 
   // error handling
   if (page.url().includes("failure=true")) {
+    await browser.close();
     return "error";
   } else {
     const cookies = await page.cookies();
@@ -60,7 +62,7 @@ const getData = async (cookies) => {
 
   const jsonData = response.data;
 
-  console.log(jsonData);
+  // console.log(jsonData);
   return jsonData;
 };
 
@@ -71,8 +73,12 @@ app.get("/data", async (request, response) => {
       return response.status(400).send("Username and password are required");
     }
     const cookie = await getCookies(username, password);
-    const data = await getData(cookie);
-    response.send(data);
+    if (cookie === "error") {
+      response.send("error");
+    } else {
+      data = await getData(cookie);
+      response.send(data);
+    }
   } catch (error) {
     console.error("Error occurred:", error);
     response.status(500).send(error);
