@@ -1,6 +1,7 @@
 const express = require("express");
 const puppeteer = require("puppeteer");
 require("dotenv").config();
+const axios = require("axios");
 const cors = require("cors");
 
 const app = express();
@@ -12,7 +13,7 @@ app.listen(PORT, () => {
   console.log("Server Listening on PORT:", PORT);
 });
 
-const getData = async (username, password) => {
+const getCookies = async (username, password) => {
   const browser = await puppeteer.launch({
     args: [
       "--disable-setuid-sandox",
@@ -41,20 +42,37 @@ const getData = async (username, password) => {
     const jSessionIdCookie = cookies.find(
       (cookie) => cookie.name === "JSESSIONID"
     );
-
     await browser.close();
     return jSessionIdCookie.value;
   }
 };
 
+const getData = async (cookies) => {
+  const response = await axios.get(
+    "https://rcoem.in/getSubjectOnChangeWithSemId1.json",
+    {
+      headers: {
+        accept: "application/json",
+        Cookie: `JSESSIONID=${cookies}`,
+      },
+    }
+  );
+
+  const jsonData = response.data;
+
+  console.log(jsonData);
+  return jsonData;
+};
+
 app.get("/data", async (request, response) => {
   try {
     const { username, password } = request.query;
-    // if (!username || !password) {
-    //   return response.status(400).send("Username and password are required");
-    // }
-    const jSessionId = await getData(username, password);
-    response.send(jSessionId);
+    if (!username || !password) {
+      return response.status(400).send("Username and password are required");
+    }
+    const cookie = await getCookies(username, password);
+    const data = await getData(cookie);
+    response.send(data);
   } catch (error) {
     console.error("Error occurred:", error);
     response.status(500).send(error);
