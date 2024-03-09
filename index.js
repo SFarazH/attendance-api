@@ -1,5 +1,6 @@
 const express = require("express");
 const puppeteer = require("puppeteer");
+const serverless = require("serverless-http");
 require("dotenv").config();
 const axios = require("axios");
 const cors = require("cors");
@@ -12,6 +13,11 @@ const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
   console.log("Server Listening on PORT:", PORT);
 });
+app.get("/", (req, res) => {
+  res.json({ message: "Welocome to Attendance API!" });
+});
+
+module.exports.handler = serverless(app);
 
 const getCookies = async (username, password) => {
   const browser = await puppeteer.launch({
@@ -81,6 +87,6 @@ app.get("/data", async (request, response) => {
     }
   } catch (error) {
     console.error("Error occurred:", error);
-    response.status(500).send(error);
+    response.status(500).send("error is" + error);
   }
 });
